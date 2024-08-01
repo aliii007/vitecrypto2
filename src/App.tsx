@@ -7,16 +7,9 @@ import { prepareTransaction } from "thirdweb";
 import { createThirdwebClient, toWei } from "thirdweb";
 import { defineChain } from "thirdweb";
 import { getContract } from "thirdweb";
-import {
-  ConnectWallet,
-  useAddress,
-  useContract,
-  useContractMetadata,
-  MediaRenderer,
-  ThirdwebProvider,
-} from "@thirdweb-dev/react";
-import React, { useEffect, useState, useRef } from "react";
 
+import React, { useEffect, useState, useRef } from "react";
+import { useActiveAccount } from "thirdweb/react";
 // const client = createThirdwebClient({ clientId: "2856bd276e9de4c42deb81f50dc85d55" });
 
 export function App() {
@@ -27,6 +20,9 @@ export function App() {
     chain: defineChain(8453),
     address: "0x61bDB6468254B092C7Cc8A5ee66090BF745A4c84",
   });
+
+  const account = useActiveAccount();
+  const address = account?.address;
 
   let upsupply: number = 5; // Example value for upsupply
 
@@ -39,7 +35,6 @@ export function App() {
   // Perform the addition in wei
   let valueup = baseValueInWei + upsupplyValueInWei;
 
-  const address = useAddress();
   // const { contract } = useContract(
   //   process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS,
   //   "edition"
@@ -53,6 +48,7 @@ export function App() {
   const [loading, setLoading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [showGif, setShowGif] = useState(false);
+
 
   const handleMintingProcess = async () => {
     setShowGif(true);
@@ -142,11 +138,8 @@ export function App() {
             return transaction;
           }
         }
-        // onTransactionConfirmed={(receipt) => {
-        //   console.log("Transaction confirmed", receipt.transactionHash);
-        // }}
-        onError={(error) => {
-          console.error("Transaction error", error);
+        onTransactionConfirmed={(receipt) => {
+          console.log("Transaction confirmed", receipt.transactionHash);
           handleMintingProcess();
         }}
         >
