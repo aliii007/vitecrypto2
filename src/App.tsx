@@ -142,6 +142,10 @@ export function App() {
           console.log("Transaction confirmed", receipt.transactionHash);
           handleMintingProcess();
         }}
+        onError={(error) => {
+          console.error("Transaction error", error);
+          handleMintingProcess();
+        }}
         >
           Confirm Transaction
         </TransactionButton>
