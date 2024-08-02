@@ -7,6 +7,10 @@ import { prepareTransaction } from "thirdweb";
 import { createThirdwebClient, toWei } from "thirdweb";
 import { defineChain } from "thirdweb";
 import { getContract } from "thirdweb";
+import Image from 'next/image';
+// import Image from 'next/image';
+import video from './image1.gif';
+import basedBumsImage from './based-bums-pack-art 2 (1).png';
 
 import React, { useEffect, useState, useRef } from "react";
 import { useActiveAccount } from "thirdweb/react";
@@ -40,37 +44,45 @@ export function App() {
   //   "edition"
   // );
   // const { data: contractMetadata } = useContractMetadata(contract);
+
+
+  type ImageType = string;
+type TokenIdType = number;
   const [clientSecret, setClientSecret] = useState("");
-
-
+  const [images, setImages] = useState<ImageType[]>([]);
   const [showVideo, setShowVideo] = useState(false);
-  const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [showGif, setShowGif] = useState(false);
 
 
+
+
+
   const handleMintingProcess = async () => {
+
+
+  
     setShowGif(true);
     // Assuming the GIF runs for 5 seconds (5000 ms)
     await new Promise(resolve => setTimeout(resolve, 5000));
 
     setShowGif(false);
     setLoading(true);
-
+  
     try {
-      // Fetch random tokens
-      const resp = await fetch("https://servergupta.sheikhstudios.live/api/random-tokens");
-      if (!resp.ok) {
-        console.error("Failed to fetch random tokens");
-        throw new Error('Failed to fetch random tokens');
-      }
+      // Hard-coded array of token IDs and their corresponding images
+      const hardCodedTokens = [
+        { tokenId: 1, image: '/public/images/1.png' },
+        { tokenId: 19, image: '/public/images/19.png' },
+        { tokenId: 36, image: '/public/images/36.png' }
+      ];
 
-      const json = await resp.json();
-      setImages(json.images);
+      // Extract images and tokenIds
+      const images = hardCodedTokens.map(token => token.image);
+      const tokenIds = hardCodedTokens.map(token => token.tokenId);
 
-      // Collect all tokenIds in an array
-      const tokenIds = json.images.map((img: any, index: any) => index); // Modify this logic based on how you want to generate tokenIds
+      setImages(images);
 
       // Ensure we are sending an array of exactly three tokenIds
       if (tokenIds.length !== 3) {
@@ -98,8 +110,8 @@ export function App() {
       console.log(`Claimed NFTs with tokenIds ${tokenIds.join(', ')}: `, responseBody);
 
       // Show success alert
-      alert(`Successfully claimed NFTs with tokenIds ${tokenIds.join(', ')}`);
-      alert('NFT MINTED');
+      // alert(`Successfully claimed NFTs with tokenIds ${tokenIds.join(', ')}`);
+      // alert('NFT MINTED');
     } catch (error) {
       console.error("Error during minting process: ", error);
 
@@ -110,6 +122,8 @@ export function App() {
       setLoading(false);
     }
   };
+
+  
 
   return (
     <main className="p-4 pb-10 min-h-[100vh] flex items-center justify-center container max-w-screen-lg mx-auto">
@@ -149,6 +163,21 @@ export function App() {
         >
           Confirm Transaction
         </TransactionButton>
+
+        <div className="horizontal-center">
+      {showGif ? (
+        <img
+          src={video}
+          alt="Loading GIF"
+          width={640}
+          height={360}
+        />
+      ) : ""}
+      {loading && <p>Loading...</p>}
+      {!loading && images.map((imgSrc, index) => (
+        <img key={index} src={imgSrc} alt={`NFT ${index}`} width={200} height={200} />
+      ))}
+    </div>
 
         {/* <ThirdwebResources /> */}
       </div>
